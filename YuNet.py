@@ -140,7 +140,23 @@ class YuNet:
             if input_src.isdigit():
                 input_type = "webcam"
                 input_src = int(input_src)
-            self.cap = cv2.VideoCapture(input_src)
+            # Prefer DirectShow backend on Windows when opening integer webcam ids
+            # This helps with virtual webcams (Phone Link / Your Phone) which
+            # sometimes don't open with the default backend.
+            try:
+                if isinstance(input_src, int):
+                    self.cap = cv2.VideoCapture(input_src, cv2.CAP_DSHOW)
+                else:
+                    self.cap = cv2.VideoCapture(input_src)
+                # If opening failed and we used an int, try without specifying the backend
+                if not self.cap.isOpened() and isinstance(input_src, int):
+                    self.cap.open(input_src)
+                if not self.cap.isOpened():
+                    print(f"Unable to open video source: {input_src}")
+                    sys.exit()
+            except Exception as e:
+                print(f"Error opening video source {input_src}: {e}")
+                sys.exit()
             self.video_fps = int(self.cap.get(cv2.CAP_PROP_FPS))
             self.img_w = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             self.img_h = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
