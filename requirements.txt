@@ -1,2 +1,8 @@
 opencv-python >= 4.5.1.48
 depthai >= 2.10
+deepface >= 0.0.75
+tensorflow >= 2.12.0
+tf-keras >= 2.12.0
+spotipy >= 2.22.1
+Pillow >= 9.0.0
+numpy >= 1.21.0
